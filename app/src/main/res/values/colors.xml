@@ -12,4 +12,8 @@
     <color name="green_normal">#52796f</color>
     <color name="green_darker">#354f52</color>
     <color name="green_dark">#2f3e46</color>
+
+    <color name="primary_text_color">#212121</color>
+    <color name="secondary_text_color">#9AA2AF</color>
+    <color name="white_color">#FFFFFF</color>
 </resources>

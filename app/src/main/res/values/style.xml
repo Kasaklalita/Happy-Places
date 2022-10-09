@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CustomNoActionBarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="CustomNoActionBarTheme" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor">@color/green_darker</item>
     </style>
     <style name="CustomToolbarStyle">
