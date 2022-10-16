@@ -3,8 +3,10 @@ package com.kasaklalita.happyplaces.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.kasaklalita.happyplaces.R
+import com.kasaklalita.happyplaces.adapters.HappyPlacesAdapter
 import com.kasaklalita.happyplaces.database.DatabaseHandler
 import com.kasaklalita.happyplaces.models.HappyPlaceModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,10 +28,19 @@ class MainActivity : AppCompatActivity() {
         val getHappyPlaceList: ArrayList<HappyPlaceModel> = dbHandler.getHappyPlacesList()
 
         if (getHappyPlaceList.size > 0) {
-            for (i in getHappyPlaceList) {
-                Log.e("Title", i.title)
-                Log.e("Description", i.description)
-            }
+            rvHappyPlacesList.visibility = View.VISIBLE
+            tvNoRecordsAvailable.visibility = View.GONE
+            setupHappyPlacesRecyclerView(getHappyPlaceList)
+        } else {
+            rvHappyPlacesList.visibility = View.GONE
+            tvNoRecordsAvailable.visibility = View.VISIBLE
         }
+    }
+
+    private fun setupHappyPlacesRecyclerView(happyPlaceList: ArrayList<HappyPlaceModel>) {
+        rvHappyPlacesList.layoutManager = LinearLayoutManager(this)
+        rvHappyPlacesList.setHasFixedSize(true)
+        val placesAdapter = HappyPlacesAdapter(this, happyPlaceList)
+        rvHappyPlacesList.adapter = placesAdapter
     }
 }
