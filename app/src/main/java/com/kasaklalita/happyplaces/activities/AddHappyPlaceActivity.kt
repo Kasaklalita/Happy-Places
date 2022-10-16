@@ -1,4 +1,4 @@
-package com.kasaklalita.happyplaces
+package com.kasaklalita.happyplaces.activities
 
 import android.Manifest
 import android.app.Activity
@@ -22,6 +22,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.kasaklalita.happyplaces.R
 import kotlinx.android.synthetic.main.activity_add_happy_place.*
 import java.io.File
 import java.io.FileOutputStream
@@ -34,6 +35,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
     private var cal = Calendar.getInstance()
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+    private var saveImageToInternalStorage: Uri? = null
+    private var mLatitud: Double = 0.0
+    private var mLongitude: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,20 +57,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         etDate.setOnClickListener(this)
-
-        tvAddImage.setOnClickListener {
-            val pictureDialog = AlertDialog.Builder(this)
-            pictureDialog.setTitle("Select Action")
-            val pictureDialogItems =
-                arrayOf("Select photo from Gallery", "Capture photo from camera")
-            pictureDialog.setItems(pictureDialogItems) { _, which ->
-                when (which) {
-                    0 -> choosePhotoFromGallery()
-                    1 -> takePhotoFromCamera()
-                }
-            }
-            pictureDialog.show()
-        }
+        tvAddImage.setOnClickListener(this)
+        btnSave.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -80,13 +72,22 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     cal.get(Calendar.DAY_OF_MONTH)
                 ).show()
             }
-//            R.id.tvAddImage -> {
-//                Toast.makeText(
-//                    this@AddHappyPlaceActivity,
-//                    "Storage READ/WRITE permissions are granted. Now you can select an image from GALLERY",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
+            R.id.tvAddImage -> {
+                val pictureDialog = AlertDialog.Builder(this)
+                pictureDialog.setTitle("Select Action")
+                val pictureDialogItems =
+                    arrayOf("Select photo from Gallery", "Capture photo from camera")
+                pictureDialog.setItems(pictureDialogItems) { _, which ->
+                    when (which) {
+                        0 -> choosePhotoFromGallery()
+                        1 -> takePhotoFromCamera()
+                    }
+                }
+                pictureDialog.show()
+            }
+            R.id.btnSave -> {
+                // TODO Store save the Datamodel to the database
+            }
         }
     }
 
@@ -105,7 +106,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     try {
                         val selectedImageBitmap =
                             MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
-                        val saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
+                        saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
                         Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
                         ivPlaceImage.setImageBitmap(selectedImageBitmap)
                     } catch (e: IOException) {
@@ -118,9 +119,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
             } else if (requestCode == CAMERA) {
-                val thumbnail : Bitmap = data!!.extras!!.get("data") as Bitmap
+                val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
                 ivPlaceImage.setImageBitmap(thumbnail)
-                val saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
+                saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
                 Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
             }
         }
