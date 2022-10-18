@@ -1,8 +1,10 @@
 package com.kasaklalita.happyplaces.activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kasaklalita.happyplaces.R
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         fabAddHappyPlace.setOnClickListener {
             val intent = Intent(this, AddHappyPlaceActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, ADD_PLACE_ACTIVITY_REQUEST_CODE)
         }
         getHappyPlacesListFromLocalDB()
     }
@@ -42,5 +44,20 @@ class MainActivity : AppCompatActivity() {
         rvHappyPlacesList.setHasFixedSize(true)
         val placesAdapter = HappyPlacesAdapter(this, happyPlaceList)
         rvHappyPlacesList.adapter = placesAdapter
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                getHappyPlacesListFromLocalDB()
+            } else {
+                Log.e("Activity", "Cancelled of Back pressed")
+            }
+        }
+    }
+
+    companion object {
+        var ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
     }
 }
