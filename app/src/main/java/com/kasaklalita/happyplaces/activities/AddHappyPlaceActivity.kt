@@ -54,7 +54,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         if (intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)) {
-            mHappyPlaceDetails = intent.getSerializableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel
+            mHappyPlaceDetails =
+                intent.getSerializableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel
         }
 
         dateSetListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -99,7 +100,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 else -> {
                     val happyPlaceModel = HappyPlaceModel(
-                        0,
+                        if (mHappyPlaceDetails == null) 0 else mHappyPlaceDetails!!.id,
                         etTitle.text.toString(),
                         saveImageToInternalStorage.toString(),
                         etDescription.text.toString(),
@@ -109,18 +110,34 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         mLongitude
                     )
                     val dbHandler = DatabaseHandler(this)
-                    val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
-
-                    if (addHappyPlace > 0) {
-                        setResult(Activity.RESULT_OK)
-                        finish()
+                    if (mHappyPlaceDetails == null) {
+                        val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                        if (addHappyPlace > 0) {
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Adding failed $addHappyPlace",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     } else {
-                        Toast.makeText(
-                            this,
-                            "hui $addHappyPlace",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        val updateHappyPlace = dbHandler.updateHappyPlace(happyPlaceModel)
+                        if (updateHappyPlace > 0) {
+                            setResult(Activity.RESULT_OK)
+                            finish()
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Updating failed $updateHappyPlace",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
+
+
+
                 }
             }
         }
