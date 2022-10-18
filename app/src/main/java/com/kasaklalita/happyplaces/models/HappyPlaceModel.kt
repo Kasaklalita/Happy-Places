@@ -9,4 +9,4 @@ data class HappyPlaceModel(
     val location: String,
     val latitude: Double,
     val longitude: Double
-)
+) : java.io.Serializable
